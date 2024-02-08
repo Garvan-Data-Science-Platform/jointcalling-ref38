@@ -10,12 +10,14 @@ sample_name_map = file(params.sample_name_map)
 callset_name = params.callset_name
 num_gvcfs = sample_name_map.readLines().size()
 
-gatk_path = "/paella/CRAMPipeline/projects/BINF-469-GATK4/gatk/gatk-4.1.8.0"
+gatk_path = "/g/data/np30/users/nn6960/gatk/gatk-4.1.8.0"
 
-unpadded_intervals_file = file("/directflow/ClinicalGenomicsPipeline/dev/2019-11-05-BINF-469-GATK4/gatk-workflows/broad-references/hg38/v0/hg38.even.handcurated.20k.intervals")
+unpadded_intervals_file = file("/g/data/np30/users/nn6960/ref38/hg38/v0/hg38.even.handcurated.20k.intervals")
 num_of_original_intervals = unpadded_intervals_file.readLines().size()
 
 process DynamicallyCombineIntervals {
+    module 'singularity'
+
     input:
     path intervals
     val merge_count
@@ -75,6 +77,8 @@ with open("${intervals}") as f:
 }
 
 process getIntervalLength {
+    module 'singularity'
+
     input:
     val size
 
@@ -96,6 +100,8 @@ process getIntervalLength {
 }
 
 process CombineGenotypeSitesOnlyGVCF {
+    module 'singularity'
+
     input:
     path sample_name_map
     val unpadded_intervals
@@ -152,6 +158,7 @@ process CombineGenotypeSitesOnlyGVCF {
 }
 
 process ImportGVCFs {
+    module 'singularity'
 
     input:
     path sample_name_map
@@ -262,7 +269,8 @@ process MakeSitesOnlyVcf {
 }
 
 process GatherSiteOnlyVCFs {
-    // module load /share/ClusterShare/Modules/modulefiles/contrib/centos6.10/marcow/tabix
+    module 'singularity'
+    module '/g/data/np30/users/nn6960/centos6.10/marcow/tabix/gcc-4.4.6/0.2.5'
 
     input:
     path(vcfandtbis)
@@ -273,7 +281,7 @@ process GatherSiteOnlyVCFs {
     script:
     output_vcf_name = "${callset_name}.sites_only.vcf.gz"
     """
-	export PATH="/home/glsai/tabix/tabix:$PATH"
+    export PATH="/g/data/np30/users/nn6960/tabix/tabix:$PATH"
     ls -1 *vcf.gz > inputs.list
 
     # --ignore-safety-checks makes a big performance difference so we include it in our invocation.
@@ -291,6 +299,8 @@ process GatherSiteOnlyVCFs {
 }
 
 process IndelsVariantRecalibrator {
+    module 'singularity'
+
     input:
     tuple path(vcf), path(tbi)
 
@@ -301,7 +311,6 @@ process IndelsVariantRecalibrator {
     recalibration_filename = "${callset_name}.indels.recal"
     tranches_filename = "${callset_name}.indels.tranches"
     """
-	export PATH="/home/glsai/tabix/tabix:$PATH"
     ls \${mills_resource_vcf}
     ${gatk_path}/gatk --java-options "-Xmx24g -Xms24g" \
         VariantRecalibrator \
@@ -320,6 +329,8 @@ process IndelsVariantRecalibrator {
 }
 
 process SNPsVariantRecalibratorClassic {
+    module 'singularity'
+
     input:
     tuple path(vcf), path(tbi)
 
@@ -330,7 +341,6 @@ process SNPsVariantRecalibratorClassic {
     recalibration_filename = "${callset_name}.snps.recal"
     tranches_filename = "${callset_name}.snps.tranches"
     """
-	export PATH="/home/glsai/tabix/tabix:$PATH"
     ${gatk_path}/gatk --java-options "-Xmx20g -Xms20g" \
         VariantRecalibrator \
         -V ${vcf} \
@@ -350,6 +360,8 @@ process SNPsVariantRecalibratorClassic {
 
 
 process ApplyRecalibration {
+    module 'singularity'
+
     input:
     tuple val(idx), val(interval), path(vcf), path(tbi)
     tuple path(snps_recalibration), path(snps_ecalibration_index), path(snps_tranches)
@@ -361,7 +373,6 @@ process ApplyRecalibration {
     script:
     recalibrated_vcf_filename = "${callset_name}.filtered.${idx}.vcf.gz"
     """
-	export PATH="/home/glsai/tabix/tabix:$PATH" 
     ${gatk_path}/gatk --java-options "-Xmx5g -Xms5g" \
         ApplyVQSR \
         -O tmp.indel.recalibrated.vcf \
@@ -385,9 +396,10 @@ process ApplyRecalibration {
 }
 
 process FinalGather {
-    module '/share/ClusterShare/Modules/modulefiles/contrib/centos6.10/marcow/tabix/gcc-4.4.6/0.2.5'
-    
+
     publishDir 'output/', mode: "move"
+
+    module 'singularity'
 
     input:
     path(vcfandtbis)
@@ -398,7 +410,7 @@ process FinalGather {
     script:
     output_vcf_name = "${callset_name}.vcf.gz"
     """
-	export PATH="/home/glsai/tabix/tabix:$PATH"
+    export PATH="/g/data/np30/users/nn6960/tabix/tabix:$PATH"
     ls -1 *vcf.gz > inputs.list
 
     # --ignore-safety-checks makes a big performance difference so we include it in our invocation.
