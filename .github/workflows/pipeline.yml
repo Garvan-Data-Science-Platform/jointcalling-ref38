@@ -10,7 +10,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Set up hpci
-        uses: Garvan-Data-Science-Platform/hpci-scripts/.github/actions/setup-hpci@main
+        uses: https://github.com/Garvan-Data-Science-Platform/hpci-scripts/.github/actions/setup-hpci@feature/separate-key-and-version
         with:
           submodule_token: ${{ secrets.SUBMODULE_TOKEN }}
           project_id: ${{ secrets.PROJECT_ID }}
