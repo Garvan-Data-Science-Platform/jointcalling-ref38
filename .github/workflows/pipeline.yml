@@ -1,0 +1,42 @@
+name: Fetch checkout and run on NCI
+on:
+  pull_request:
+
+jobs:
+  setup-and-test:
+    permissions:
+      contents: "read"
+      id-token: "write"
+    runs-on: self-hosted
+    steps:
+      - name: Set up hpci
+        uses: Garvan-Data-Science-Platform/hpci-scripts/.github/actions/setup-hpci@main
+        with:
+          submodule_token: ${{ secrets.SUBMODULE_TOKEN }}
+          project_id: ${{ secrets.PROJECT_ID }}
+          project_number: ${{ secrets.PROJECT_NUMBER }}
+          registry_sa: ${{ secrets.REGISTRY_SA }}
+          key_prefix: "prod_bio"
+          hpci_version: "0.0.2"
+
+      - name: Check quota
+        id: run_jobs
+        run: |
+          CHECK_QUOTA=$(hpci-exe \
+                        --user ${{secrets.USER_NAME}} \
+                        --host ${{secrets.HOST_NAME}} \
+                        --port 22 \
+                        --publicKey access_key.pub \
+                        --privateKey access_key \
+                        exec nci_account)
+          echo '```' > output.txt
+          echo "$CHECK_QUOTA" >> output.txt
+          echo '```' >> output.txt
+
+      - name: Fancy summary
+        id: summary
+        run: |
+          cat output.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: Clean up
+        run: rm access_key*
