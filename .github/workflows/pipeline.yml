@@ -2,13 +2,6 @@ name: Fetch checkout and run on NCI
 on:
   pull_request:
 
-env:
-  TIMESTAMP: $(date "+%Y%m%d_%H%M%S")
-  REPO: ${{github.even.repository.name}}
-  GIT_REF: ${{github.head_ref}}
-  URL: git@github.com:${{github.repository}}.git
-  INSTANCE_PARENT: /scratch/np30/test_repositories/$REPO/$GIT_REF/$TIMESTAMP
-
 jobs:
   setup-and-test:
     permissions:
@@ -25,6 +18,15 @@ jobs:
           registry_sa: ${{ secrets.REGISTRY_SA }}
           key_prefix: "prod_bio"
           hpci_version: "0.0.2"
+
+      - name: Set env
+        shell: bash
+        run: |
+          echo "TIMESTAMP=$(date '+%Y%m%d_%H%M%S')" >> $GITHUB_ENV
+          echo "REPO=${{github.event.repository.name}}" >> $GITHUB_ENV
+          echo "GIT_REF=${{github.head_ref}}" >> $GITHUB_ENV
+          echo "URL=git@github.com:${{github.repository}}.git" >> $GITHUB_ENV
+          echo "INSTANCE_PARENT=/scratch/np30/test_repositories/$REPO/$GIT_REF/$TIMESTAMP" >> $GITHUB_ENV
 
       - name: Clone repo
         id: run_jobs
@@ -53,8 +55,8 @@ jobs:
             --privateKey access_key \
             schedule \
             --script JointCaller.sh \
-            --logFile $INSTANCE_PARENT/${{inputs.repo}}/.nextflow.log \
-            -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=${{inputs.repo}},GIT_REF=${{inputs.git_ref}},URL=${{inputs.url}}
+            --logFile $INSTANCE_PARENT/$REPO/.nextflow.log \
+            -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=$REPO,GIT_REF=$GIT_REF,URL=$URL
 
       - name: Clean up
         run: rm access_key*
