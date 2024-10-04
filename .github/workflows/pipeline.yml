@@ -37,6 +37,7 @@ jobs:
               --port 22 \
               --publicKey access_key.pub \
               --privateKey access_key \
+              schedule \
               --script hpci-scripts/$job.pbs \
               --logFile $job.log \
               -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=$REPO,GIT_REF=$GIT_REF,URL=$URL
@@ -50,6 +51,7 @@ jobs:
             --port 22 \
             --publicKey access_key.pub \
             --privateKey access_key \
+            schedule \
             --script JointCaller.sh \
             --logFile $INSTANCE_PARENT/${{inputs.repo}}/.nextflow.log \
             -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=${{inputs.repo}},GIT_REF=${{inputs.git_ref}},URL=${{inputs.url}}
