@@ -7,6 +7,7 @@ jobs:
     permissions:
       contents: "read"
       id-token: "write"
+    timeout-minutes: 8640
     runs-on: self-hosted
     steps:
       - name: Set up hpci
@@ -17,7 +18,7 @@ jobs:
           project_number: ${{ secrets.PROJECT_NUMBER }}
           registry_sa: ${{ secrets.REGISTRY_SA }}
           key_prefix: "prod_bio"
-          hpci_version: "0.0.2"
+          hpci_version: "0.0.3"
 
       - name: Set env
         shell: bash
