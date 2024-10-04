@@ -2,6 +2,10 @@ name: Fetch checkout and run on NCI
 on:
   pull_request:
 
+env:
+  TIMESTAMP: $(date "+%Y%m%d_%H%M%S")
+  INSTANCE_PARENT: /scratch/np30/test_repositories/${{inputs.repo}}/${{inputs.git_ref}}/${timestamp}
+
 jobs:
   setup-and-test:
     permissions:
@@ -19,24 +23,32 @@ jobs:
           key_prefix: "prod_bio"
           hpci_version: "0.0.2"
 
-      - name: Check quota
+      - name: Clone repo
         id: run_jobs
         run: |
-          CHECK_QUOTA=$(hpci-exe \
-                        --user ${{secrets.USER_NAME}} \
-                        --host ${{secrets.HOST_NAME}} \
-                        --port 22 \
-                        --publicKey access_key.pub \
-                        --privateKey access_key \
-                        exec nci_account)
-          echo '```' > output.txt
-          echo "$CHECK_QUOTA" >> output.txt
-          echo '```' >> output.txt
+          jobs=("clone")
+          for job in "${jobs[@]}"; do
+            hpci-exe \
+              --user ${{secrets.USER_NAME}} \
+              --host ${{secrets.HOST_NAME}} \
+              --port 22 \
+              --publicKey access_key.pub \
+              --privateKey access_key \
+              --script hpci-scripts/$job.pbs \
+              --logFile $job.log \
+              -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=${{inputs.repo}},GIT_REF=${{inputs.git_ref}},URL=${{inputs.url}}
 
-      - name: Fancy summary
-        id: summary
+      - name: Run pipeline
         run: |
-          cat output.txt >> $GITHUB_STEP_SUMMARY
+          hpci-exe \
+            --user ${{secrets.USER_NAME}} \
+            --host ${{secrets.HOST_NAME}} \
+            --port 22 \
+            --publicKey access_key.pub \
+            --privateKey access_key \
+            --script JointCaller.sh \
+            --logFile $INSTANCE_PARENT/${{inputs.repo}}/.nextflow.log \
+            -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=${{inputs.repo}},GIT_REF=${{inputs.git_ref}},URL=${{inputs.url}}
 
       - name: Clean up
         run: rm access_key*
