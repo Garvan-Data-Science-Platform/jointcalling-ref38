@@ -4,7 +4,10 @@ on:
 
 env:
   TIMESTAMP: $(date "+%Y%m%d_%H%M%S")
-  INSTANCE_PARENT: /scratch/np30/test_repositories/${{inputs.repo}}/${{inputs.git_ref}}/${timestamp}
+  REPO: ${{github.even.repository.name}}
+  GIT_REF: ${{github.head_ref}}
+  URL: git@github.com:${{github.repository}}.git
+  INSTANCE_PARENT: /scratch/np30/test_repositories/$REPO/$GIT_REF/$TIMESTAMP
 
 jobs:
   setup-and-test:
@@ -36,7 +39,8 @@ jobs:
               --privateKey access_key \
               --script hpci-scripts/$job.pbs \
               --logFile $job.log \
-              -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=${{inputs.repo}},GIT_REF=${{inputs.git_ref}},URL=${{inputs.url}}
+              -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=$REPO,GIT_REF=$GIT_REF,URL=$URL
+          done
 
       - name: Run pipeline
         run: |
