@@ -22,11 +22,20 @@ jobs:
       - name: Set env
         shell: bash
         run: |
-          echo "TIMESTAMP=$(date '+%Y%m%d_%H%M%S')" >> $GITHUB_ENV
-          echo "REPO=${{github.event.repository.name}}" >> $GITHUB_ENV
-          echo "GIT_REF=${{github.head_ref}}" >> $GITHUB_ENV
-          echo "URL=git@github.com:${{github.repository}}.git" >> $GITHUB_ENV
-          echo "INSTANCE_PARENT=/scratch/np30/test_repositories/$REPO/$GIT_REF/$TIMESTAMP" >> $GITHUB_ENV
+          TIMESTAMP=$(date '+%Y%m%d_%H%M%S')
+          REPO=${{ github.event.repository.name }}
+          GIT_REF=${{ github.head_ref }}
+          URL=git@github.com:${{ github.repository }}.git
+
+          # Append each to $GITHUB_ENV
+          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+          echo "REPO=$REPO" >> $GITHUB_ENV
+          echo "GIT_REF=$GIT_REF" >> $GITHUB_ENV
+          echo "URL=$URL" >> $GITHUB_ENV
+
+          # Use variables directly to define INSTANCE_PARENT
+          INSTANCE_PARENT="/scratch/np30/test_repositories/$REPO/$GIT_REF/$TIMESTAMP"
+          echo "INSTANCE_PARENT=$INSTANCE_PARENT" >> $GITHUB_ENV
 
       - name: Clone repo
         id: run_jobs
