@@ -21,4 +21,4 @@ echo "Move to correct directory ..."
 cd $INSTANCE_PARENT/$REPO
 
 echo "Run pipeline ..."
-nextflow run JointCaller.nf -c nci_configs/nextflow.config --sample_name_map sample_inputs/sample_name_map --callset_name jointCallRef38 -profile gadi,gatk4 -resume
+nextflow run JointCaller.nf -c nci_configs/nextflow.config --sample_name_map sample_inputs/sample_name_map --callset_name jointCallRef38.ch21 -profile gadi,gatk4 -resume
