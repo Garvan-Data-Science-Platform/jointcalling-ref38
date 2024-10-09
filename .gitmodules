@@ -1,3 +1,0 @@
-[submodule "hpci-scripts"]
-	path = hpci-scripts
-	url = git@github.com:Garvan-Data-Science-Platform/hpci-scripts.git
