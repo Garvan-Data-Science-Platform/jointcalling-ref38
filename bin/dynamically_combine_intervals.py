@@ -52,7 +52,7 @@ def main():
                     continue
                 # not adjacent, end here and start a new chain
                 else:
-                    l_char, l_start, l_end = add_interval(w_chr, w_start, w_end)
+                    l_char, l_start, l_end = add_interval(lines_to_write, w_chr, w_start, w_end)
                     w_chr, w_start, w_end = parse_interval(line)
                     count = 1
             if l_char != w_chr or l_start != w_start or l_end != w_end:
