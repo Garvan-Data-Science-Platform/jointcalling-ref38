@@ -56,7 +56,7 @@ def main():
                     w_chr, w_start, w_end = parse_interval(line)
                     count = 1
             if l_char != w_chr or l_start != w_start or l_end != w_end:
-                add_interval(w_chr, w_start, w_end)
+                add_interval(lines_to_write, w_chr, w_start, w_end)
             f1.writelines("\\n".join(lines_to_write))
         
 if __name__ == "__main__":
