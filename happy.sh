@@ -19,9 +19,15 @@ ref=/scratch/np30/eu1813/happy/ref38/Homo_sapiens_assembly38.fasta
 # Restrict analysis to given regions
 regions=/scratch/np30/eu1813/happy/ref38/reportable_range-1.0.hg38.chr21.bed
 
-# Create results dir
+
+echo "Move to correct directory ..."
+cd $INSTANCE_PARENT/$REPO
+
+echo "Create happy_results directory ..."
 mkdir happy_results
 
+
+echo "Run hap.py on VCF ..."
 singularity exec -B ${PWD} /scratch/np30/eu1813/happy/hap.py_latest.sif \
     /opt/hap.py/bin/hap.py \
     ${truth_vcf} \
