@@ -77,9 +77,9 @@ jobs:
             --publicKey access_key.pub \
             --privateKey access_key \
             schedule \
-            --script happy.sh output/jointCallRef38.ch21.vcf.gz\
+            --script happy.sh \
             --logFile $INSTANCE_PARENT/$REPO/happy_results/NA12878_chr21.summary.csv \
-            -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=$REPO,GIT_REF=$GIT_REF,URL=$URL
-
+            -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=$REPO,GIT_REF=$GIT_REF,URL=$URL,QEURY_VCF=output/jointCallRef38.ch21.vcf.gz,TRUTH_VCF=/scratch/np30/eu1813/happy/ref38/HG001_GRCh38_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_PGandRTGphasetransfer.vcf.gz,BED_FILE=/scratch/np30/eu1813/happy/ref38/HG001_GRCh38_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_nosomaticdel_noCENorHET7.bed,REF=/scratch/np30/eu1813/happy/ref38/Homo_sapiens_assembly38.fasta,REGIONS=/scratch/np30/eu1813/happy/ref38/reportable_range-1.0.hg38.chr21.bed
+            
       - name: Clean up
         run: rm access_key*
