@@ -17,7 +17,7 @@ echo "Run hap.py on VCF ..."
 singularity exec -B ${PWD} /scratch/np30/eu1813/happy/hap.py_latest.sif \
     /opt/hap.py/bin/hap.py \
     ${TRUTH_VCF} \
-    ${QEURY_VCF} \
+    ${QUERY_VCF} \
     -f ${BED_FILE} \
     -V \
     -o "happy_results/$(basename ${QUERY_VCF} .vcf.gz)" \
