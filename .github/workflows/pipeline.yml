@@ -68,5 +68,18 @@ jobs:
             --logFile $INSTANCE_PARENT/$REPO/.nextflow.log \
             -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=$REPO,GIT_REF=$GIT_REF,URL=$URL
 
+      - name: Run happy
+        run:
+          hpci-exe \
+            --user ${{secrets.USER_NAME}} \
+            --host ${{secrets.HOST_NAME}} \
+            --port 22 \
+            --publicKey access_key.pub \
+            --privateKey access_key \
+            schedule \
+            --script happy.sh \
+            --logFile $INSTANCE_PARENT/$REPO/happy_results/NA12878_chr21.summary.csv \
+            -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=$REPO,GIT_REF=$GIT_REF,URL=$URL
+
       - name: Clean up
         run: rm access_key*
