@@ -69,7 +69,7 @@ jobs:
             -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=$REPO,GIT_REF=$GIT_REF,URL=$URL
 
       - name: Run happy
-        run:
+        run: |
           hpci-exe \
             --user ${{secrets.USER_NAME}} \
             --host ${{secrets.HOST_NAME}} \
