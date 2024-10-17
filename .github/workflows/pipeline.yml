@@ -77,7 +77,7 @@ jobs:
             --publicKey access_key.pub \
             --privateKey access_key \
             schedule \
-            --script happy.sh \
+            --script happy.sh output/jointCallRef38.ch21.vcf.gz\
             --logFile $INSTANCE_PARENT/$REPO/happy_results/NA12878_chr21.summary.csv \
             -c INSTANCE_PARENT=$INSTANCE_PARENT,REPO=$REPO,GIT_REF=$GIT_REF,URL=$URL
 
