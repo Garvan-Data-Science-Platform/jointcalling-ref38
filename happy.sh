@@ -6,6 +6,7 @@
 #PBS -l wd
 #PBS -l mem=32GB
 #PBS -l ncpus=4
+#PBS -o happy.log
 
 set -eu -o pipefail
 
