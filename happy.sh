@@ -4,6 +4,8 @@
 #PBS -P np30
 #PBS -l storage=scratch/np30+gdata/np30+massdata/np30
 #PBS -l wd
+#PBS -l mem=32GB
+#PBS -l ncpus=4
 
 set -eu -o pipefail
 
