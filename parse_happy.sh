@@ -29,13 +29,13 @@ check_metric() {
 }
 
 # 1. SNP PASS Recall (sensitivity)      | Above 0.99
-check_metric "SNP" 0.99 10 "SNP PASS Recall"
+check_metric "SNP" 9999 10 "SNP PASS Recall"
 
 # 2. SNP PASS Precision                 | Above 0.99
 check_metric "SNP" 0.99 11 "SNP PASS Precision"
 
 # 3. INDEL PASS Recall (sensitivity)    | Above 0.95
-check_metric "INDEL" 0.95 10 "INDEL PASS Recall"
+check_metric "INDEL" 9999 10 "INDEL PASS Recall"
 
 # 4. INDEL PASS Precision               | Above 0.95
 check_metric "INDEL" 0.95 11 "INDEL PASS Precision"
