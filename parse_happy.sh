@@ -2,8 +2,15 @@
 
 set -eu -o pipefail
 
-# Path to hap.py summary.csv file
+# Path to hap.py summary.csv file and output file
 summary_file="happy_results/*summary.csv"
+output_file=parsed_$(basename ${summary_file})
+
+# Check if parsed summary file already exists
+if [ -e ${output_file} ]; then
+    echo "Error: File '${output_file}' already exists."
+    exit 1
+fi
 
 check_metric() {
     local metric_type=$1
@@ -11,12 +18,12 @@ check_metric() {
     local column=$3
     local label=$4
 
-    metric_value=$(grep "${metric_type},PASS" "${summary_file}" | cut -d, -f${column})
+    metric_value=$(grep "${metric_type},PASS" ${summary_file} | cut -d, -f${column})
     if (( $(echo "${metric_value} < ${threshold}" | bc -l) )); then
-        echo "[FAILED] ${label} BELOW THRESHOLD (${metric_value} > ${threshold})" | tee -a parsed_$(basename ${summary_file})
+        echo "[FAILED] ${label} BELOW THRESHOLD (${metric_value} > ${threshold})" | tee -a ${output_file}
         exit 1
     else
-        echo "[PASSED] ${label} ABOVE THRESHOLD (${metric_value} > ${threshold})" | tee -a parsed_$(basename ${summary_file})
+        echo "[PASSED] ${label} ABOVE THRESHOLD (${metric_value} > ${threshold})" | tee -a ${output_file}
     fi
 }
 
