@@ -12,6 +12,7 @@ if [ -e ${output_file} ]; then
     exit 1
 fi
 
+failed=false
 check_metric() {
     local metric_type=$1
     local threshold=$2
@@ -20,8 +21,8 @@ check_metric() {
 
     metric_value=$(grep "${metric_type},PASS" ${summary_file} | cut -d, -f${column})
     if (( $(echo "${metric_value} < ${threshold}" | bc -l) )); then
-        echo "[FAILED] ${label} BELOW THRESHOLD (${metric_value} > ${threshold})" | tee -a ${output_file}
-        exit 1
+        echo "[FAILED] ${label} BELOW THRESHOLD (${metric_value} < ${threshold})" | tee -a ${output_file}
+        failed=true
     else
         echo "[PASSED] ${label} ABOVE THRESHOLD (${metric_value} > ${threshold})" | tee -a ${output_file}
     fi
@@ -38,3 +39,6 @@ check_metric "INDEL" 0.95 10 "INDEL PASS Recall"
 
 # 4. INDEL PASS Precision               | Above 0.95
 check_metric "INDEL" 0.95 11 "INDEL PASS Precision"
+
+# If no metrics failed, exit with 0. Otherwise, exit with 1.
+[ "${failed}" == false ] && exit 0 || exit 1
