@@ -26,3 +26,5 @@ singularity exec -B ${PWD} /scratch/np30/eu1813/happy/hap.py_latest.sif \
     -o "happy_results/$(basename ${QUERY_VCF} .vcf.gz)" \
     -r ${REF} \
     -T ${REGIONS} 
+
+bash parse_happy.sh
